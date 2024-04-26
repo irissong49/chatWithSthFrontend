@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Display</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body>
+    <h1>Received Message:</h1>
+    <p id="received_message"></p>
+
+    <h2>Send a Message:</h2>
+    <input type="text" id="message_input">
+    <button onclick="sendMessage()">Send</button>
+    <h1>sent Message:</h1>
+    <p id="sent_message"></p>
+    <script>
+        function sendMessage() {
+            var message = document.getElementById('message_input').value;
+            fetch('/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({message: message}),
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log('Message sent:', data);
+                document.getElementById('sent_message').innerText = data;
+            });
+        }
+        setInterval(function fetchData() {
+            var xhr = new XMLHttpRequest(); // 创建 XMLHttpRequest 对象
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) { // 请求完成
+                    if (xhr.status === 200) { // 请求成功
+                        var data = xhr.responseText; // 获取服务器返回的数据
+                        document.getElementById("received_message").innerHTML = data; // 将数据显示在页面上
+                    } else {
+                        console.error('Request failed: ' + xhr.status); // 请求失败
+                    }
+                }
+            };
+            xhr.open('GET', '/data', true); // 发送 GET 请求到服务器端的 /data 路由
+            xhr.send(); // 发送请求
+        },5000);
+
+
+        function updateReceivedMsg(data){console.log('updaterecvmsg sent:', data);document.getElementById('received_message').innerText = data;}
+        // // 获取服务器端收到的消息并显示在页面上
+        // fetch('/receive', { // 使用POST方法请求服务器
+        //     method: 'POST',
+        // })
+        // .then(response => response.text()) // 从文本响应中获取数据
+        // .then(data => {
+        //     document.getElementById('received_message').innerText = data; // 将数据填充到页面上
+        //     // fetchReceivedMessage();
+        // })
+        // .catch(error => {
+        //     console.error('Error fetching message:', error);
+        // // });
+        // function fetchReceivedMessage() {
+        //     fetch('/receive', {
+        //         method: 'POST',
+        //     })
+        //     .then(response => response.text())
+        //     .then(data => {
+        //         document.getElementById('received_message').innerText = data;
+        //         console.log('Message received', data);
+        //     })
+        //     .catch(error => {
+        //         console.error('Error fetching message:', error);
+        //     });
+        // }
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+requests
+bs4
+pandas
+urllib
+random
+math
+Flask
