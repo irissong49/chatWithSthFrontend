@@ -5,16 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Message Display</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        /* 定义框的样式 */
+        .box {
+            width: 50%; /* 框的宽度 */
+            height: 500px; /* 框的高度 */
+            border: 2px solid black; /* 边框样式 */
+            padding: 20px; /* 内边距 */
+            overflow: auto; /* 设置溢出内容自动滚动 */
+        }
+
+        /* 定义文本的样式 */
+        .text {
+            white-space: normal; /* 设置文本换行 */
+        }
+    </style>
 </head>
 <body>
-    <h1>Received Message:</h1>
-    <p id="received_message"></p>
+    <div class="box">
+        <h1>user:</h1>
+        <p id="sent_message"></p>
+        <h1>AI:</h1>
+        <p id="received_message"></p>
+    </div>
 
-    <h2>Send a Message:</h2>
     <input type="text" id="message_input">
     <button onclick="sendMessage()">Send</button>
-    <h1>sent Message:</h1>
-    <p id="sent_message"></p>
+
     <script>
         function sendMessage() {
             var message = document.getElementById('message_input').value;
@@ -36,8 +53,9 @@
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === XMLHttpRequest.DONE) { // 请求完成
                     if (xhr.status === 200) { // 请求成功
-                        var data = xhr.responseText; // 获取服务器返回的数据
-                        document.getElementById("received_message").innerHTML = data; // 将数据显示在页面上
+                        var data = JSON.parse(xhr.responseText); // 解析服务器返回的 JSON 数据
+                        document.getElementById("received_message").innerHTML = data.received_message; 
+                        document.getElementById("sent_message").innerHTML = data.sent_message; // 将数据显示在页面上
                     } else {
                         console.error('Request failed: ' + xhr.status); // 请求失败
                     }
@@ -45,7 +63,7 @@
             };
             xhr.open('GET', '/data', true); // 发送 GET 请求到服务器端的 /data 路由
             xhr.send(); // 发送请求
-        },5000);
+        },1000);
 
 
         function updateReceivedMsg(data){console.log('updaterecvmsg sent:', data);document.getElementById('received_message').innerText = data;}

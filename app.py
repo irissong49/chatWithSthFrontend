@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 
+
 app = Flask(__name__)
+import json
 
 f=open("config.json","r")
 config=json.load(f)
@@ -15,7 +17,7 @@ sent_message = "initial placeholder"
 @app.route('/data')
 def get_data():
     # 在这里获取数据，这里简单地返回一个字典作为示例
-    return received_message
+    return jsonify({'received_message':received_message, 'sent_message':sent_message})
 
 @app.route('/')
 def index():
