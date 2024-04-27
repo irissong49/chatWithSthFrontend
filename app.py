@@ -2,6 +2,13 @@ from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
+f=open("config.json","r")
+config=json.load(f)
+f.close()
+
+
+WEBPORT=config['websitePort']
+
 received_message = "initial placeholder"  # 用于存储服务器端收到的消息
 sent_message = "initial placeholder"
 
@@ -34,4 +41,4 @@ def receive_message():
     return jsonify({'script': 'test();'})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=WEBPORT)
