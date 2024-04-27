@@ -45,7 +45,6 @@
             .then(response => response.text())
             .then(data => {
                 console.log('Message sent:', data);
-                document.getElementById('sent_message').innerText = data;
             });
         }
         setInterval(function fetchData() {
