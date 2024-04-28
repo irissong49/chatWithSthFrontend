@@ -27,25 +27,34 @@
         <p id="sent_message"></p>
         <h1>AI:</h1>
         <p id="received_message"></p>
+
     </div>
 
     <input type="text" id="message_input">
     <button onclick="sendMessage()">Send</button>
-
+    <p id="waiting_warning_msg"></p>
     <script>
+        var input_restriction = false;
         function sendMessage() {
-            var message = document.getElementById('message_input').value;
-            fetch('/send', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({message: message}),
-            })
-            .then(response => response.text())
-            .then(data => {
-                console.log('Message sent:', data);
-            });
+            if (input_restriction==false){
+                var message = document.getElementById('message_input').value;
+                fetch('/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({message: message}),
+                    
+                })
+                .then(response => response.text())
+                .then(data => {
+                    console.log('Message sent:', data);
+                });
+                input_restriction = true}
+            else{
+                document.getElementById('waiting_warning_msg').innerHTML ="waiting for response, please do not input new message now";
+                console.log('not sending this input message due to not received resp');
+            }
         }
         setInterval(function fetchData() {
             var xhr = new XMLHttpRequest(); // 创建 XMLHttpRequest 对象
@@ -54,7 +63,9 @@
                     if (xhr.status === 200) { // 请求成功
                         var data = JSON.parse(xhr.responseText); // 解析服务器返回的 JSON 数据
                         document.getElementById("received_message").innerHTML = data.received_message; 
-                        document.getElementById("sent_message").innerHTML = data.sent_message; // 将数据显示在页面上
+                        document.getElementById("sent_message").innerHTML = data.sent_message; 
+                        input_restriction=data.input_restriction;
+                        if (input_restriction==false){document.getElementById('waiting_warning_msg').innerHTML ="";};
                     } else {
                         console.error('Request failed: ' + xhr.status); // 请求失败
                     }
